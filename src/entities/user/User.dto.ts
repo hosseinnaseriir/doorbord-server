@@ -23,3 +23,15 @@ export class CreateUserPayload {
   role: string;
 }
 
+
+export class ValidateUserPayload {
+  @IsNotEmpty()
+  @IsString()
+  @Length(3, 50)
+  username: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+}
+
