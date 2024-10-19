@@ -1,37 +1,37 @@
-import { IsNotEmpty, IsString, Length, Matches } from "class-validator";
+import { IsNotEmpty, IsString, Length } from "class-validator";
 
 
-export class CreateUserPayload {
+export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  firstName: string;
+  readonly firstName: string;
 
   @IsNotEmpty()
   @IsString()
-  lastName: string;
+  readonly lastName: string;
 
   @IsNotEmpty()
   @IsString()
   @Length(3, 50)
-  username: string;
+  readonly username: string;
 
   @IsNotEmpty()
   @IsString()
-  password: string;
+  readonly password: string;
 
   @IsString()
-  role: string;
+  readonly role: string;
 }
 
 
-export class ValidateUserPayload {
+export class ValidateUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(3, 50)
-  username: string;
+  readonly username: string;
 
   @IsNotEmpty()
   @IsString()
-  password: string;
+  readonly password: string;
 }
 

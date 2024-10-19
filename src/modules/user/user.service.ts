@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserPayload, User, ValidateUserPayload } from 'src/entities';
+import { CreateUserDto, User, ValidateUserDto } from 'src/entities';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -13,7 +13,7 @@ export class UserService {
         private jwtService: JwtService,
     ) { }
 
-    async generateUserService(user: CreateUserPayload) {
+    async generateUserService(user: CreateUserDto) {
         const existingUser = await this.userRepository.findOneBy({
             username: user.username
         });
@@ -30,12 +30,12 @@ export class UserService {
         await this.userRepository.save(newUser);
     }
 
-    async validateUserService(user: ValidateUserPayload) {
+    async validateUserService(user: ValidateUserDto) {
         const existsUser = await this.userRepository.findOneBy({ username: user.username });
-        if (!existsUser) throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+        if (!existsUser) throw new HttpException('کاربر پیدا نشد', HttpStatus.UNAUTHORIZED);
 
         const isPasswordMatch: boolean = await bcrypt.compare(user.password, existsUser.password)
-        if (!isPasswordMatch) throw new BadRequestException('Password does not match');
+        if (!isPasswordMatch) throw new BadRequestException('نام کاربری یا رمز اشتباه است');
         return existsUser;
     }
 

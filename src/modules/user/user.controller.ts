@@ -1,8 +1,8 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, UseGuards, Version } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserPayload, ValidateUserPayload } from 'src/entities';
+import { CreateUserDto, ValidateUserDto } from 'src/entities';
 import { AuthGuard } from '@nestjs/passport';
-import { Public } from 'src/decorators';
+import { Public } from 'src/common/decorators';
 
 @Controller('user')
 export class UserController {
@@ -12,7 +12,7 @@ export class UserController {
     @Version('1')
     @Post('/generate')
     @HttpCode(HttpStatus.CREATED)
-    generateUser(@Body() user: CreateUserPayload) {
+    generateUser(@Body() user: CreateUserDto) {
         return this.userService.generateUserService(user)
     }
 
@@ -21,11 +21,12 @@ export class UserController {
     @Post('/validate')
     @UseGuards(AuthGuard('local'))
     @HttpCode(HttpStatus.OK)
-    async  validateUser(@Body() user: ValidateUserPayload) {
+    async validateUser(@Body() user: ValidateUserDto) {
         try {
             const validatedUser = await this.userService.validateUserService(user);
             const token = await this.userService.generateJwtToken(validatedUser);
-            return { message: "Login Seccessfull", validatedUser, token }
+            const {password, ...account} = validatedUser
+            return { message: "خوش آمدید", account, token }
         } catch (ex) {
             throw new HttpException(ex.message, HttpStatus.UNAUTHORIZED);
         }

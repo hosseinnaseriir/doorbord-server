@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './entities';
 import { UserModule } from './modules';
+import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { UserModule } from './modules';
       synchronize: true, // use in development only
       entities: [User], 
     }),
-    UserModule,  
+    UserModule,
+    TasksModule,  
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy, LocalStrategy } from 'src/strategies';
 import { APP_GUARD } from '@nestjs/core';
-import { UserJwtGuard } from 'src/guards/user/jwt.guard';
+import { UserJwtGuard } from 'src/common/guards/user/jwt.guard';
 
 @Module({
   imports: [
