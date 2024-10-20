@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, UseGuards, Version } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards, Version } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, ValidateUserDto } from 'src/entities';
 import { AuthGuard } from '@nestjs/passport';
@@ -25,10 +25,24 @@ export class UserController {
         try {
             const validatedUser = await this.userService.validateUserService(user);
             const token = await this.userService.generateJwtToken(validatedUser);
-            const {password, ...account} = validatedUser
+            const { password, ...account } = validatedUser
             return { message: "خوش آمدید", account, token }
         } catch (ex) {
             throw new HttpException(ex.message, HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @Public()
+    @Version('1')
+    @Get('/profile')
+    @HttpCode(HttpStatus.OK)
+    async getUserProfile(@Req() req) {
+        try {
+            const { password, ...user } = await this.userService.getUserFromToken(req.headers.authorization.split(' ')[1]);
+            return { user };
+        } catch (ex) {
+            throw new HttpException(ex.message, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
 }
