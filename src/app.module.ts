@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { User } from './entities';
 import { UserModule } from './modules';
 import { TasksModule } from './modules/tasks/tasks.module';
+import { Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission } from 'src/entities';
 
 @Module({
   imports: [
@@ -21,11 +22,11 @@ import { TasksModule } from './modules/tasks/tasks.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       options: {
-        encrypt: false,  
+        encrypt: false,
         trustServerCertificate: true,
       },
       synchronize: true, // use in development only
-      entities: [User],
+      entities: [User, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission],
     }),
     UserModule,
     TasksModule,

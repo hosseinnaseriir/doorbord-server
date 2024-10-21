@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy, LocalStrategy } from 'src/strategies';
 import { APP_GUARD } from '@nestjs/core';
 import { UserJwtGuard } from 'src/common/guards/user/jwt.guard';
+import { RolesGuard } from 'src/common/guards/user/roles.guard';
 
 @Module({
   imports: [
@@ -32,6 +33,10 @@ import { UserJwtGuard } from 'src/common/guards/user/jwt.guard';
       provide: APP_GUARD,
       useClass: UserJwtGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
+    }
   ]
 })
 export class UserModule { }
