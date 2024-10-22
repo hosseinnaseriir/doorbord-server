@@ -11,8 +11,8 @@ export class CreateTaskDto {
     readonly title: string;
 
     @IsNotEmpty()
-    @IsNumber()
-    readonly categoryId: number;
+    @IsNumber({}, { each: true })
+    readonly categoryIds: number[];
 
     @IsNotEmpty()
     @IsNumber({}, { each: true })

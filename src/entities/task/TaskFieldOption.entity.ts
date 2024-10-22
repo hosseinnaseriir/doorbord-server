@@ -1,7 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { TaskField } from './TaskField.entity';
-
-
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { TaskField } from "./TaskField.entity";
 
 @Entity()
 export class TaskFieldOption {
@@ -17,4 +15,3 @@ export class TaskFieldOption {
     @ManyToOne(() => TaskField, (taskField) => taskField.options)
     field: TaskField;
 }
-

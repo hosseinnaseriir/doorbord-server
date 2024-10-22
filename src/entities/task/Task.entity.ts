@@ -15,8 +15,9 @@ export class Task {
     @Column()
     title: string;
 
-    @ManyToOne(() => TaskCategory)
-    category: TaskCategory;  // Reference to TaskCategory entity
+    @ManyToMany(() => TaskCategory)
+    @JoinTable()
+    categories: TaskCategory[];  
 
     @ManyToMany(() => TaskPermission)
     @JoinTable()

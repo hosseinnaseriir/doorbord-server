@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateTaskDto, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission } from 'src/entities';
+import { CreateTaskDto, CreateTaskFieldDto, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission } from 'src/entities';
 import { In, Repository } from 'typeorm';
 
 @Injectable()
@@ -15,14 +15,14 @@ export class TasksService {
     ) { }
     async getAllTasksService(): Promise<any> {
         const res = await this.taskRepository.find({
-            relations: ['category', 'fields', 'fields.type', 'fields.options', 'permissions'],
+            relations: ['categories', 'fields', 'fields.type', 'fields.options', 'permissions'],
         })
         return res
     }
 
     async createNewTaskService(task: CreateTaskDto): Promise<Task> {
-        const category = await this.taskCategoryRepository.findOne({ where: { id: task.categoryId } });
-        if (!category) throw new HttpException('دسته بندی پیدا نشد!', HttpStatus.NOT_FOUND);
+        const categories = await this.taskCategoryRepository.findBy({ id: In(task.categoryIds) });
+        if (!categories) throw new HttpException('دسته بندی پیدا نشد!', HttpStatus.NOT_FOUND);
 
         const permissions = await this.taskPermissionRepository.findBy({ id: In(task.permissionIds) });
         if (permissions.length === 0) {
@@ -36,7 +36,7 @@ export class TasksService {
         const newTask = this.taskRepository.create({
             title: task.title,
             key: task.key,
-            category,
+            categories,
             permissions,
             fields
         });
@@ -54,6 +54,19 @@ export class TasksService {
 
         const removedTask = await this.taskRepository.remove(task);
         return removedTask;
+    }
+
+
+    async getAllTaskFieldsService(): Promise<any> {
+        const res = await this.taskFieldRepository.find({
+            relations: ['type', 'options'],
+        })
+        return res
+    }
+
+
+    async createNewTaskFieldService(task: CreateTaskFieldDto): Promise<any> {
+        return {}
     }
 
 }

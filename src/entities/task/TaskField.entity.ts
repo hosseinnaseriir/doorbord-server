@@ -1,7 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
-import {  TaskFieldType } from './TaskFieldType.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { TaskPermission } from './TaskPermission.entity';
+import { TaskCategory } from './TaskCategory.entity';
+import { TaskFieldType } from './TaskFieldType.entity';
 import { Task } from './Task.entity';
 import { TaskFieldOption } from './TaskFieldOption.entity';
+
 
 @Entity()
 export class TaskField {
