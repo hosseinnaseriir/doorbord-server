@@ -20,7 +20,7 @@ export class TaskField {
     @ManyToOne(() => TaskFieldType)
     type: TaskFieldType;  // Reference to TaskFieldType entity
 
-    @Column()
+    @Column({ default: false })
     required: boolean;
 
     @OneToMany(() => TaskFieldOption, (taskFieldOption) => taskFieldOption.field, { cascade: true })

@@ -15,7 +15,7 @@ export class CreateTaskFieldDto {
     readonly title: string;
 
     @IsNotEmpty()
-    readonly type: TaskFieldType;
+    readonly type: number;
 
     @IsBoolean()
     readonly required: boolean;
