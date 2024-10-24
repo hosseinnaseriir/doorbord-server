@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Version } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto, CreateTaskFieldDto } from 'src/entities';
+import { CreateTaskDto, CreateTaskFieldDto, TaskSubmission, TaskSubmissionDto } from 'src/entities';
 import { Role } from 'src/common/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/roles.enum';
 
@@ -9,15 +9,12 @@ export class TasksController {
     constructor(private readonly tasksService: TasksService) { }
 
     // TASKS
-
     @Get('all')
     @Version('1')
     @HttpCode(HttpStatus.OK)
     getAllTasks() {
         return this.tasksService.getAllTasksService()
     }
-
-
 
     @Role(RoleEnum.SUPER_ADMIN)
     @Post('create')
@@ -45,7 +42,6 @@ export class TasksController {
 
 
     // FIELDS
-
     @Get('fields')
     @Version('1')
     @HttpCode(HttpStatus.OK)
@@ -83,4 +79,23 @@ export class TasksController {
     deleteTaskField(@Param() params: { id: number | string }) {
         return this.tasksService.deleteTaskFieldService(+params.id);
     }
+    3
+
+    // SUBMIT A TASK FORM
+    @Role(RoleEnum.SUPER_ADMIN)
+    @Post('form/:id')
+    @Version('1')
+    @HttpCode(HttpStatus.OK)
+    saveTaskForm(@Param() params: { id: number | string }, @Body() taskSubmittionDto: TaskSubmissionDto) {
+        return this.tasksService.saveTaskSubmission(+params.id, taskSubmittionDto);
+    }
+
+    @Role(RoleEnum.SUPER_ADMIN)
+    @Get('submissions')
+    @Version('1')
+    @HttpCode(HttpStatus.OK)
+    getAllTaskForms(): Promise<TaskSubmission[]> {
+        return this.tasksService.findAllTaskSubmissions();
+    }
+
 }

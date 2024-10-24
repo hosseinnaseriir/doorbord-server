@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateTaskDto, CreateTaskFieldDto, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission } from 'src/entities';
+import { TaskSubmissionStatus } from 'src/common/enums';
+import { CreateTaskDto, CreateTaskFieldDto, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission, TaskSubmissionDto } from 'src/entities';
+import { TaskFieldValue } from 'src/entities/task/TaskFieldValue.entity';
+import { TaskSubmission } from 'src/entities/task/TaskSubmission.entity';
 import { In, Repository } from 'typeorm';
 
 @Injectable()
@@ -12,8 +15,11 @@ export class TasksService {
         @InjectRepository(TaskPermission) private taskPermissionRepository: Repository<TaskPermission>,
         @InjectRepository(TaskCategory) private taskCategoryRepository: Repository<TaskCategory>,
         @InjectRepository(TaskFieldType) private taskFieldTypeRepository: Repository<TaskFieldType>,
+        @InjectRepository(TaskSubmission) private readonly taskSubmissionRepository: Repository<TaskSubmission>,
+        @InjectRepository(TaskFieldValue) private readonly taskFieldValueRepository: Repository<TaskFieldValue>,
     ) { }
 
+    // TASKS
     async getAllTasksService(): Promise<any> {
         const res = await this.taskRepository.find({
             relations: ['categories', 'fields', 'fields.type', 'fields.options', 'permissions'],
@@ -101,7 +107,7 @@ export class TasksService {
         return removedTask;
     }
 
-    // Fields
+    // TASK FIELDS
     async getTaskFieldsByTaskId(taskId: number): Promise<any> {
         const task = await this.taskRepository.findOne({
             where: { id: taskId },
@@ -150,7 +156,6 @@ export class TasksService {
 
         return newTaskField;
     }
-
 
     async updateTaskFieldService(taskFieldId: number, taskFieldDto: CreateTaskFieldDto): Promise<TaskField> {
         const taskField = await this.taskFieldRepository.findOne({
@@ -205,7 +210,6 @@ export class TasksService {
         return taskField;
     }
 
-
     async deleteTaskFieldService(taskFieldId: number): Promise<void> {
         const taskField = await this.taskFieldRepository.findOne({
             where: { id: taskFieldId },
@@ -217,6 +221,36 @@ export class TasksService {
         }
 
         await this.taskFieldRepository.remove(taskField);
+    }
+
+    // SUBMIT A TASK FORM
+    async saveTaskSubmission(taskId: number, taskSubmittionDto: TaskSubmissionDto) {
+        const task = await this.taskRepository.findOne({ where: { id: taskId } });
+
+        if (!taskSubmittionDto.fields || taskSubmittionDto.fields.length === 0) {
+            throw new HttpException('پر کردن فیلد ها الزامی است!', HttpStatus.BAD_REQUEST);
+        }
+        const taskSubmission = new TaskSubmission();
+        taskSubmission.task = task;
+        taskSubmission.submittedAt = new Date();
+        taskSubmission.status = taskSubmittionDto.status || TaskSubmissionStatus.BACKLOG;
+        const savedSubmission = await this.taskSubmissionRepository.save(taskSubmission);
+
+        const valuesToSave = taskSubmittionDto.fields?.map(fv => {
+            const fieldValue = new TaskFieldValue();
+            fieldValue.submission = savedSubmission;
+            fieldValue.field = { id: fv.fieldId } as TaskField;
+            fieldValue.value = fv.value;
+            return fieldValue;
+        });
+
+        const taskField = await this.taskFieldValueRepository.save(valuesToSave);
+
+        return taskField
+    }
+
+    async findAllTaskSubmissions(): Promise<TaskSubmission[]> {
+        return this.taskSubmissionRepository.find({ relations: ['task', 'fieldValues', 'fieldValues.field'] });
     }
 
 

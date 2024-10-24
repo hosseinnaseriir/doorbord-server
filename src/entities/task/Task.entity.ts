@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTabl
 import { TaskPermission } from './TaskPermission.entity';
 import { TaskCategory } from './TaskCategory.entity';
 import { TaskField } from './TaskField.entity';
+import { TaskSubmission } from './TaskSubmission.entity';
 
 
 @Entity()
@@ -26,4 +27,7 @@ export class Task {
     @ManyToMany(() => TaskField)
     @JoinTable()
     fields: TaskField[];
+
+    @OneToMany(() => TaskSubmission, submission => submission.task)
+    submissions: TaskSubmission[];  
 }
