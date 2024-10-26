@@ -3,12 +3,14 @@ import { UserService } from './user.service';
 import { CreateUserDto, ValidateUserDto } from 'src/entities';
 import { AuthGuard } from '@nestjs/passport';
 import { Public } from 'src/common/decorators';
+import { Role } from 'src/common/decorators/roles.decorator';
+import { RoleEnum } from 'src/common/enums';
 
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
-    @Public()
+    @Role(RoleEnum.SUPER_ADMIN)
     @Version('1')
     @Post('/generate')
     @HttpCode(HttpStatus.CREATED)
@@ -32,7 +34,6 @@ export class UserController {
         }
     }
 
-    @Public()
     @Version('1')
     @Get('/profile')
     @HttpCode(HttpStatus.OK)

@@ -9,6 +9,7 @@ export class TasksController {
     constructor(private readonly tasksService: TasksService) { }
 
     // TASKS
+    @Role(RoleEnum.SUPER_ADMIN, RoleEnum.ADMIN)
     @Get('all')
     @Version('1')
     @HttpCode(HttpStatus.OK)
@@ -79,7 +80,6 @@ export class TasksController {
     deleteTaskField(@Param() params: { id: number | string }) {
         return this.tasksService.deleteTaskFieldService(+params.id);
     }
-    3
 
     // SUBMIT A TASK FORM
     @Role(RoleEnum.SUPER_ADMIN)
@@ -90,7 +90,7 @@ export class TasksController {
         return this.tasksService.saveTaskSubmission(+params.id, taskSubmittionDto);
     }
 
-    @Role(RoleEnum.SUPER_ADMIN)
+    @Role(RoleEnum.SUPER_ADMIN, RoleEnum.SUPERVISOR)
     @Get('submissions')
     @Version('1')
     @HttpCode(HttpStatus.OK)
@@ -98,12 +98,20 @@ export class TasksController {
         return this.tasksService.findAllTaskSubmissions();
     }
 
-    @Role(RoleEnum.SUPER_ADMIN) // Adjust roles as necessary
+    @Role(RoleEnum.SUPER_ADMIN, RoleEnum.SUPERVISOR)
     @Get('submissions/:id')
     @Version('1')
     @HttpCode(HttpStatus.OK)
     getTaskFormById(@Param('id') id: number | string): Promise<TaskSubmission> {
         return this.tasksService.findTaskSubmissionById(+id);
+    }
+
+    @Role(RoleEnum.SUPER_ADMIN)
+    @Delete('submissions/:id')
+    @Version('1')
+    @HttpCode(HttpStatus.OK)
+    deleteTaskFormById(@Param('id') id: number | string): Promise<void> {
+        return this.tasksService.deleteTaskSubmissionById(+id);
     }
 
 }

@@ -4,6 +4,7 @@ import { CreateUserDto, User, ValidateUserDto } from 'src/entities';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { RoleEnum } from 'src/common/enums';
 
 @Injectable()
 export class UserService {
@@ -14,11 +15,17 @@ export class UserService {
     ) { }
 
     async generateUserService(user: CreateUserDto) {
+        if (user.role === RoleEnum.SUPER_ADMIN) throw new HttpException('شما دسترسی لازم برای ساخت این نقش را ندارید!', HttpStatus.CONFLICT);
+
+        if (!Object.values(RoleEnum).includes(user.role as RoleEnum)) {
+            throw new HttpException('نقش وارد شده معتبر نمی‌باشد!', HttpStatus.BAD_REQUEST);
+        }
+    
         const existingUser = await this.userRepository.findOneBy({
             username: user.username
         });
 
-        if (existingUser) throw new HttpException('User already exists', HttpStatus.CONFLICT);
+        if (existingUser) throw new HttpException('مقدار یوزرنیم تکراری است!', HttpStatus.CONFLICT);
         const hashedPassword = bcrypt.hashSync(user.password, 10);
         const newUser = this.userRepository.create({
             username: user.username,
@@ -46,7 +53,7 @@ export class UserService {
     async getUserFromToken(token: string): Promise<User> {
         const decoded = this.jwtService.verify(token);
         const user = await this.userRepository.findOneBy({ id: decoded.id });
-        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!user) throw new HttpException('اکاربر پیدا نشد', HttpStatus.NOT_FOUND);
         return user;
     }
 }

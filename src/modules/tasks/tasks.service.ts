@@ -265,4 +265,23 @@ export class TasksService {
 
         return taskSubmission;
     }
+
+
+    async deleteTaskSubmissionById(id: number): Promise<void> {
+        const taskSubmission = await this.taskSubmissionRepository.findOne({
+            where: { id },
+            relations: ['fieldValues'],
+        });
+
+        if (!taskSubmission) {
+            throw new HttpException('ماموریت  پیدا نشد!', HttpStatus.NOT_FOUND);
+        }
+
+        if (taskSubmission.fieldValues && taskSubmission.fieldValues.length > 0) {
+            await this.taskFieldValueRepository.remove(taskSubmission.fieldValues);
+        }
+
+
+        await this.taskSubmissionRepository.delete(id);
+    }
 }
