@@ -253,5 +253,16 @@ export class TasksService {
         return this.taskSubmissionRepository.find({ relations: ['task', 'fieldValues', 'fieldValues.field'] });
     }
 
+    async findTaskSubmissionById(id: number): Promise<TaskSubmission> {
+        const taskSubmission = await this.taskSubmissionRepository.findOne({
+            where: { id },
+            relations: ['task', 'fieldValues', 'fieldValues.field'],
+        });
 
+        if (!taskSubmission) {
+            throw new HttpException('ماموریت پیدا نشد!', HttpStatus.NOT_FOUND);
+        }
+
+        return taskSubmission;
+    }
 }

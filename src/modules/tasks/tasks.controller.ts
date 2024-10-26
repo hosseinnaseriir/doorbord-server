@@ -98,4 +98,12 @@ export class TasksController {
         return this.tasksService.findAllTaskSubmissions();
     }
 
+    @Role(RoleEnum.SUPER_ADMIN) // Adjust roles as necessary
+    @Get('submissions/:id')
+    @Version('1')
+    @HttpCode(HttpStatus.OK)
+    getTaskFormById(@Param('id') id: number | string): Promise<TaskSubmission> {
+        return this.tasksService.findTaskSubmissionById(+id);
+    }
+
 }
