@@ -25,7 +25,7 @@ import { Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPerm
         encrypt: false,
         trustServerCertificate: true,
       },
-      synchronize: true, // use in development only
+      // synchronize: true, // use in development only
       entities: [User, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission, TaskSubmission, TaskFieldValue],
     }),
     UserModule,
