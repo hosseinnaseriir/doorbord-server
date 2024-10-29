@@ -7,6 +7,8 @@ import { TaskFieldValue, TaskSubmission, User } from './entities';
 import { UserModule } from './modules';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission } from 'src/entities';
+import { TaskFieldsModule } from './modules/task-fields/task-fields.module';
+import { TaskSubmissionsModule } from './modules/task-submissions/task-submissions.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPerm
     }),
     UserModule,
     TasksModule,
+    TaskFieldsModule,
+    TaskSubmissionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
