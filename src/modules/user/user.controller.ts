@@ -46,4 +46,17 @@ export class UserController {
         }
     }
 
+    @Role(RoleEnum.SUPER_ADMIN, RoleEnum.SUPERVISOR) 
+    @Version('1')
+    @Get('/technicians')
+    @HttpCode(HttpStatus.OK)
+    async getTechnicians() {
+        try {
+            const technicians = await this.userService.getUsersByRole(RoleEnum.TECHNICIAN);
+            return { technicians };
+        } catch (ex) {
+            throw new HttpException(ex.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

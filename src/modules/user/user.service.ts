@@ -20,7 +20,7 @@ export class UserService {
         if (!Object.values(RoleEnum).includes(user.role as RoleEnum)) {
             throw new HttpException('نقش وارد شده معتبر نمی‌باشد!', HttpStatus.BAD_REQUEST);
         }
-    
+
         const existingUser = await this.userRepository.findOneBy({
             username: user.username
         });
@@ -55,5 +55,12 @@ export class UserService {
         const user = await this.userRepository.findOneBy({ id: decoded.id });
         if (!user) throw new HttpException('اکاربر پیدا نشد', HttpStatus.NOT_FOUND);
         return user;
+    }
+
+    async getUsersByRole(role: RoleEnum): Promise<User[]> {
+        return this.userRepository.find({
+            where: { role },
+            select: ['id', 'username', 'firstName', 'lastName', 'role']
+        })
     }
 }

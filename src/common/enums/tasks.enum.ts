@@ -4,4 +4,5 @@ export enum TaskSubmissionStatus {
     DOING = 'DOING',
     BLOCKED = 'BLOCKED',
     DONE = 'DONE',
+    ASSIGNED = 'ASSIGNED',
 }

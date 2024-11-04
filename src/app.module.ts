@@ -3,12 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TaskFieldValue, TaskSubmission, User } from './entities';
+import { Mission, TaskFieldValue, TaskSubmission, User } from './entities';
 import { UserModule } from './modules';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission } from 'src/entities';
 import { TaskFieldsModule } from './modules/task-fields/task-fields.module';
 import { TaskSubmissionsModule } from './modules/task-submissions/task-submissions.module';
+import { MissionModule } from './modules/mission/mission.module';
 
 @Module({
   imports: [
@@ -27,13 +28,14 @@ import { TaskSubmissionsModule } from './modules/task-submissions/task-submissio
         encrypt: false,
         trustServerCertificate: true,
       },
-      // synchronize: true, // use in development only
-      entities: [User, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission, TaskSubmission, TaskFieldValue],
+      synchronize: true, // use in development only
+      entities: [User, Task, TaskCategory, TaskField, TaskFieldOption, TaskFieldType, TaskPermission, TaskSubmission, TaskFieldValue, Mission],
     }),
     UserModule,
     TasksModule,
     TaskFieldsModule,
     TaskSubmissionsModule,
+    MissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
